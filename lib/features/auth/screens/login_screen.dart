@@ -10,7 +10,7 @@ import 'package:cobes_marketplace/features/auth/screens/auth_screen.dart';
 import 'package:cobes_marketplace/features/auth/screens/forget_password_screen.dart';
 import 'package:cobes_marketplace/features/auth/screens/otp_login_screen.dart';
 import 'package:cobes_marketplace/features/auth/widgets/only_social_login_widget.dart';
-import 'package:cobes_marketplace/features/auth/widgets/social_login_widget.dart';
+
 import 'package:cobes_marketplace/features/dashboard/screens/dashboard_screen.dart';
 import 'package:cobes_marketplace/features/splash/controllers/splash_controller.dart';
 import 'package:cobes_marketplace/features/splash/domain/models/config_model.dart';
@@ -344,6 +344,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                       ],
                                     ),
 
+/*
                                   if(configModel.customerLogin?.loginOption?.otpLogin == 1) ...[
                                     const SizedBox(height: Dimensions.paddingSizeDefault),
 
@@ -375,7 +376,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                     ),
                                     const SizedBox(height: Dimensions.paddingSizeLarge),
                                   ],
+*/
 
+/*
                                   if((configModel.customerLogin?.loginOption?.socialMediaLogin == 1) && configModel.customerLogin?.loginOption?.otpLogin != 1)
                                     Row(
                                       children: [
@@ -394,13 +397,18 @@ class _LoginScreenState extends State<LoginScreen> {
                                         Expanded(child: Divider(color: Theme.of(context).hintColor)),
                                       ],
                                     ),
+*/
 
+/*
                                   if(configModel.customerLogin?.loginOption?.socialMediaLogin == 1)
                                     const SizedBox(height: Dimensions.paddingSizeSmall),
+*/
 
 
+/*
                                   if(configModel.customerLogin?.loginOption?.socialMediaLogin == 1)
                                     const Center(child: SocialLoginWidget()),
+*/
                                   const SizedBox(height: Dimensions.paddingSizeLarge),
 
                                   Row(mainAxisAlignment: MainAxisAlignment.center, children: [

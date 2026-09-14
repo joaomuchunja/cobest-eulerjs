@@ -25,6 +25,9 @@ class ApiErrorHandler {
             case DioExceptionType.receiveTimeout:
               errorDescription = "Receive timeout in connection with API server";
               break;
+            case DioExceptionType.transformTimeout:
+              errorDescription = "Transform timeout in connection with API server";
+              break;
             case DioExceptionType.badResponse:
               switch (error.response!.statusCode) {
 
@@ -53,6 +56,14 @@ class ApiErrorHandler {
                 case 404:
                   break;
                 case 400:
+                  if(error.response!.data['errors'] != null){
+                    ErrorResponse errorResponse = ErrorResponse.fromJson(error.response?.data);
+                    errorDescription = errorResponse.errors?[0].message;
+                  } else{
+                    errorDescription = error.response?.data['message'] ?? '';
+                  }
+                  break;
+                case 422:
                   if(error.response!.data['errors'] != null){
                     ErrorResponse errorResponse = ErrorResponse.fromJson(error.response?.data);
                     errorDescription = errorResponse.errors?[0].message;

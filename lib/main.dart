@@ -24,6 +24,7 @@ import 'package:cobes_marketplace/features/product/controllers/product_controlle
 import 'package:cobes_marketplace/features/product/controllers/seller_product_controller.dart';
 import 'package:cobes_marketplace/features/product_details/controllers/product_details_controller.dart';
 import 'package:cobes_marketplace/features/profile/controllers/profile_contrroller.dart';
+import 'package:cobes_marketplace/features/purchase_installment/controllers/purchase_installment_controller.dart';
 import 'package:cobes_marketplace/features/refund/controllers/refund_controller.dart';
 import 'package:cobes_marketplace/features/reorder/controllers/re_order_controller.dart';
 import 'package:cobes_marketplace/features/restock/controllers/restock_controller.dart';
@@ -146,6 +147,7 @@ try {
       ChangeNotifierProvider(create: (context) => di.sl<ReviewController>()),
       ChangeNotifierProvider(create: (context) => di.sl<SellerProductController>()),
       ChangeNotifierProvider(create: (context) => di.sl<RestockController>()),
+      ChangeNotifierProvider(create: (context) => di.sl<PurchaseInstallmentController>()),
     ],
     child: MyApp(body: body),
   ));

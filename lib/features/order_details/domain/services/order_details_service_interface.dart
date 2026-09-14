@@ -8,6 +8,10 @@ abstract class OrderDetailsServiceInterface {
 
   Future <dynamic> getOrderInvoice(String orderID);
 
+  Future<dynamic> getOrderDetailsWithInstallments(String orderID);
+
+  Future<dynamic> submitInstallmentPaymentProof(int installmentId, String imagePath, String customerNote);
+
   Future<dynamic> downloadDigitalProduct(int orderDetailsId);
 
   Future<dynamic> resentDigitalProductOtp(int orderId);

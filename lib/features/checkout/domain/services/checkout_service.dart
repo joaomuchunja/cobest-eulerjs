@@ -55,4 +55,34 @@ class CheckoutService implements CheckoutServiceInterface{
   Future getReferralAmount(String? amount) async {
     return await checkoutRepositoryInterface.getReferralAmount(amount);
   }
+
+  @override
+  Future getInstallmentOptions({double? couponDiscount}) async {
+    return await checkoutRepositoryInterface.getInstallmentOptions(couponDiscount: couponDiscount);
+  }
+
+  @override
+  Future placeOrderByInstallment({
+    required int paymentPeriod,
+    String? addressId,
+    String? billingAddressId,
+    String? couponCode,
+    String? orderNote,
+    String? paymentNote,
+    String? currentCurrencyCode,
+    bool? isCheckCreateAccount,
+    String? guestId,
+  }) async {
+    return await checkoutRepositoryInterface.placeOrderByInstallment(
+      paymentPeriod: paymentPeriod,
+      addressId: addressId,
+      billingAddressId: billingAddressId,
+      couponCode: couponCode,
+      orderNote: orderNote,
+      paymentNote: paymentNote,
+      currentCurrencyCode: currentCurrencyCode,
+      isCheckCreateAccount: isCheckCreateAccount,
+      guestId: guestId,
+    );
+  }
 }

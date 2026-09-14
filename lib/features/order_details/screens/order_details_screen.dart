@@ -9,6 +9,7 @@ import 'package:cobes_marketplace/features/order_details/widgets/delivery_man_re
 import 'package:cobes_marketplace/features/order_details/widgets/order_amount_calculation.dart';
 import 'package:cobes_marketplace/features/order_details/widgets/order_details_status_widget.dart';
 import 'package:cobes_marketplace/features/order_details/widgets/order_payment_info_widget.dart';
+import 'package:cobes_marketplace/features/order_details/widgets/order_installment_widget.dart';
 import 'package:cobes_marketplace/features/order_details/widgets/ordered_change_amount_widget.dart';
 import 'package:cobes_marketplace/features/order_details/widgets/ordered_product_list_widget.dart';
 import 'package:cobes_marketplace/features/order_details/widgets/seller_section_widget.dart';
@@ -46,9 +47,13 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
       await Provider.of<OrderDetailsController>(Get.context!, listen: false).getOrderDetails(widget.orderId.toString());
       await Provider.of<OrderController>(Get.context!, listen: false).initTrackingInfo(widget.orderId.toString());
       await Provider.of<OrderDetailsController>(Get.context!, listen: false).getOrderFromOrderId(widget.orderId.toString());
+      // Chamar a nova API para obter informações de pagamentos parcelados
+      await Provider.of<OrderDetailsController>(Get.context!, listen: false).getOrderDetailsWithInstallments(widget.orderId.toString());
     }else{
       await Provider.of<OrderDetailsController>(Get.context!, listen: false).trackOrder(orderId: widget.orderId.toString(), phoneNumber: widget.phone, isUpdate: false);
       await Provider.of<OrderDetailsController>(Get.context!, listen: false).getOrderFromOrderId(widget.orderId.toString());
+      // Chamar a nova API para obter informações de pagamentos parcelados
+      await Provider.of<OrderDetailsController>(Get.context!, listen: false).getOrderDetailsWithInstallments(widget.orderId.toString());
     }
   }
 
@@ -153,6 +158,11 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                         const SizedBox(height: Dimensions.paddingSizeDefault),
 
                         const OrderPaymentInfoWidget(),
+
+                        // Widget de informações de parcelamento
+                        OrderInstallmentWidget(
+                          installmentDetails: orderProvider.orderInstallmentDetails,
+                        ),
 
                         Container(
                           height: Dimensions.fontSizeDefault,

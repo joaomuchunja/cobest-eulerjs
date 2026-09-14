@@ -114,6 +114,11 @@ import 'package:cobes_marketplace/features/profile/domain/repositories/profile_r
 import 'package:cobes_marketplace/features/profile/domain/repositories/profile_repository_interface.dart';
 import 'package:cobes_marketplace/features/profile/domain/services/profile_service.dart';
 import 'package:cobes_marketplace/features/profile/domain/services/profile_service_interface.dart';
+import 'package:cobes_marketplace/features/purchase_installment/controllers/purchase_installment_controller.dart';
+import 'package:cobes_marketplace/features/purchase_installment/domain/repositories/purchase_installment_repository.dart';
+import 'package:cobes_marketplace/features/purchase_installment/domain/repositories/purchase_installment_repository_interface.dart';
+import 'package:cobes_marketplace/features/purchase_installment/domain/services/purchase_installment_service.dart';
+import 'package:cobes_marketplace/features/purchase_installment/domain/services/purchase_installment_service_interface.dart';
 import 'package:cobes_marketplace/features/refund/controllers/refund_controller.dart';
 import 'package:cobes_marketplace/features/refund/domain/repositories/refund_repository.dart';
 import 'package:cobes_marketplace/features/refund/domain/repositories/refund_repository_interface.dart';
@@ -240,6 +245,7 @@ Future<void> init() async {
   sl.registerLazySingleton(() => RefundRepository(dioClient: sl()));
   sl.registerLazySingleton(() => ReOrderRepository(dioClient: sl()));
   sl.registerLazySingleton(() => RestockRepository(dioClient: sl()));
+  sl.registerLazySingleton(() => PurchaseInstallmentRepository(dioClient: sl()));
 
 
   // Provider
@@ -281,6 +287,7 @@ Future<void> init() async {
   sl.registerFactory(() => RefundController(refundServiceInterface: sl()));
   sl.registerFactory(() => ReOrderController(reOrderServiceInterface: sl()));
   sl.registerFactory(() => RestockController(restockServiceInterface: sl()));
+  sl.registerFactory(() => PurchaseInstallmentController(purchaseInstallmentServiceInterface: sl()));
 
   //interface
   AddressRepoInterface addressRepoInterface = AddressRepository(dioClient: sl());
@@ -461,6 +468,11 @@ Future<void> init() async {
   RestockServiceInterface restockServiceInterface = RestockService(restockRepositoryInterface: sl());
   sl.registerLazySingleton(() => restockServiceInterface);
 
+  PurchaseInstallmentRepositoryInterface purchaseInstallmentRepositoryInterface = PurchaseInstallmentRepository(dioClient: sl());
+  sl.registerLazySingleton(() => purchaseInstallmentRepositoryInterface);
+  PurchaseInstallmentServiceInterface purchaseInstallmentServiceInterface = PurchaseInstallmentService(purchaseInstallmentRepositoryInterface: sl());
+  sl.registerLazySingleton(() => purchaseInstallmentServiceInterface);
+
   // DataSyncRepoInterface dataSyncRepoInterface = DataSyncRepo(dioClient: sl(), sharedPreferences: sl());
   // sl.registerLazySingleton(() => dataSyncRepoInterface);
   // DataSyncServiceInterface dataSyncServiceInterface = DataSyncService(dataSyncRepoInterface: sl());
@@ -504,4 +516,5 @@ Future<void> init() async {
   sl.registerLazySingleton(() => WalletService(walletRepositoryInterface : sl()));
   sl.registerLazySingleton(() => SearchProductService(searchProductRepositoryInterface : sl()));
   sl.registerLazySingleton(() => RestockService(restockRepositoryInterface : sl()));
+  sl.registerLazySingleton(() => PurchaseInstallmentService(purchaseInstallmentRepositoryInterface : sl()));
 }

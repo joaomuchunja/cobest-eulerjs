@@ -4,6 +4,7 @@ import 'package:cobes_marketplace/features/blog/screens/blog_screen.dart';
 import 'package:cobes_marketplace/features/order_details/screens/guest_track_order_screen.dart';
 import 'package:cobes_marketplace/features/profile/controllers/profile_contrroller.dart';
 import 'package:cobes_marketplace/features/profile/screens/profile_screen1.dart';
+import 'package:cobes_marketplace/features/purchase_installment/screens/purchase_by_installment_screen.dart';
 import 'package:cobes_marketplace/features/restock/screens/restock_list_screen.dart';
 import 'package:cobes_marketplace/features/splash/domain/models/business_pages_model.dart';
 import 'package:cobes_marketplace/features/support/screens/support_ticket_screen.dart';
@@ -139,6 +140,10 @@ class _MoreScreenState extends State<MoreScreen> {
                                 MenuButtonWidget(image: Images.restockIcon, title: getTranslated('restock_requests', context),
                                   navigateTo: const RestockListScreen(),
                                 ),
+
+                              MenuButtonWidget(image: Images.calenderIcon, title: getTranslated('purchase_by_installment', context),
+                                navigateTo: const PurchaseByInstallmentScreen(),
+                              ),
 
                               if(splashController.configModel!.activeTheme != "default" && authController.isLoggedIn())
                                 MenuButtonWidget(image: Images.compare, title: getTranslated('compare_products', context),

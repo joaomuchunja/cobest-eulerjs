@@ -48,6 +48,8 @@ class AppConstants {
   static const String relatedProductUri = '/api/v1/products/related-products/';
   static const String orderUri = '/api/v1/customer/order/list?limit=10&offset=';
   static const String orderDetailsUri = '/api/v1/customer/order/details?order_id=';
+  static const String orderDetailsWithInstallmentsUri = '/api/v1/customer/order/details-with-installments?order_id=';
+  static const String submitInstallmentPaymentProof = '/api/v1/customer/installment/submit-payment-proof';
   static const String orderPlaceUri = '/api/v1/customer/order/place';
   static const String sellerUri = '/api/v1/seller?seller_id=';
   static const String sellerProductUri = '/api/v1/seller/';
@@ -128,6 +130,9 @@ class AppConstants {
   static const String businessPagesUri = '/api/v1/business-pages?type=';
   static const String getDeliveryManReview = '/api/v1/customer/order/deliveryman-review?order_id=';
   static const String submitDeliveryManReview = '/api/v1/customer/order/deliveryman-review/update?order_id=';
+  static const String purchaseRequestStores = '/api/v1/purchase-requests/stores';
+  static const String purchaseRequestCreate = '/api/v1/purchase-requests';
+  static const String purchaseRequestShow = '/api/v1/purchase-requests/';
 
 
   //address
@@ -165,6 +170,9 @@ class AppConstants {
   static const String verifyTokenUri = '/api/v1/auth/verify-token';
   static const String existingAccountCheck = '/api/v1/auth/existing-account-check';
   static const String referralAmountUri = '/api/v1/cart/get-referral-discount-redeem';
+  static const String installmentOptionsUri = '/api/v1/customer/order/installment-options';
+  static const String installmentDetailsUri = '/api/v1/customer/order/installment-details';
+  static const String placeOrderByInstallmentUri = '/api/v1/customer/order/place-by-installment';
 
 
 
@@ -226,6 +234,7 @@ class AppConstants {
     LanguageModel(imageUrl: Images.hi, languageName: 'Hindi', countryCode: 'IN', languageCode: 'hi'),
     LanguageModel(imageUrl: Images.bn, languageName: 'Bangla', countryCode: 'BD', languageCode: 'bn'),
     LanguageModel(imageUrl: Images.es, languageName: 'Spanish', countryCode: 'ES', languageCode: 'es'),
+    LanguageModel(imageUrl: Images.pt, languageName: 'Português', countryCode: 'PT', languageCode: 'pt'),
   ];
 
 

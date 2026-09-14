@@ -1,6 +1,7 @@
 
 import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:cobes_marketplace/data/datasource/remote/dio/dio_client.dart';
 import 'package:cobes_marketplace/data/datasource/remote/exception/api_error_handler.dart';
 import 'package:cobes_marketplace/data/model/api_response.dart';
@@ -29,6 +30,32 @@ class OrderDetailsRepository implements OrderDetailsRepositoryInterface{
   Future<ApiResponseModel> getOrderFromOrderId(String orderID) async {
     try {
       final response = await dioClient!.get('${AppConstants.getOrderFromOrderId}$orderID&guest_id=${Provider.of<AuthController>(Get.context!, listen: false).getGuestToken()}');
+      return ApiResponseModel.withSuccess(response);
+    } catch (e) {
+      return ApiResponseModel.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
+
+  @override
+  Future<ApiResponseModel> getOrderDetailsWithInstallments(String orderID) async {
+    try {
+      final response = await dioClient!.get(AppConstants.orderDetailsWithInstallmentsUri+orderID);
+      return ApiResponseModel.withSuccess(response);
+    } catch (e) {
+      return ApiResponseModel.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
+
+  @override
+  Future<ApiResponseModel> submitInstallmentPaymentProof(int installmentId, String imagePath, String customerNote) async {
+    try {
+      final formData = FormData.fromMap({
+        'installment_id': installmentId,
+        'proof_image': await MultipartFile.fromFile(imagePath),
+        'customer_note': customerNote,
+      });
+      
+      final response = await dioClient!.post(AppConstants.submitInstallmentPaymentProof, data: formData);
       return ApiResponseModel.withSuccess(response);
     } catch (e) {
       return ApiResponseModel.withError(ApiErrorHandler.getMessage(e));

@@ -94,6 +94,13 @@ dev_dependencies:
   flutter_lints: ^3.0.1
   drift_dev: ^2.21.0
   build_runner: ^2.4.13
+  flutter_launcher_icons: ^0.13.1
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/cobest_ios_logo.png" # Substitua pelo caminho do seu ícone
+  remove_alpha_ios: true 
 
   flutter_test:
     sdk: flutter

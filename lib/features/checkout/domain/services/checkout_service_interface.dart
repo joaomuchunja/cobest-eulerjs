@@ -22,4 +22,18 @@ abstract class CheckoutServiceInterface{
 
   Future<dynamic> getReferralAmount(String? amount);
 
+  Future<dynamic> getInstallmentOptions({double? couponDiscount});
+
+  Future<dynamic> placeOrderByInstallment({
+    required int paymentPeriod,
+    String? addressId,
+    String? billingAddressId,
+    String? couponCode,
+    String? orderNote,
+    String? paymentNote,
+    String? currentCurrencyCode,
+    bool? isCheckCreateAccount,
+    String? guestId,
+  });
+
 }

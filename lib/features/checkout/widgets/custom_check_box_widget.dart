@@ -18,7 +18,19 @@ class CustomCheckBoxWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<CheckoutController>(
       builder: (context, order, child) {
-        return InkWell(onTap: () => order.setDigitalPaymentMethodName(index, name),
+        return InkWell(onTap: () {
+          // Verificar se é pagamento a prazo
+          if (name.toLowerCase().contains('installment') || 
+              name.toLowerCase().contains('prazo') ||
+              title.toLowerCase().contains('installment') ||
+              title.toLowerCase().contains('prazo')) {
+            print('===== PAGAMENTO A PRAZO SELECIONADO =====');
+            print('Name: $name');
+            print('Title: $title');
+          }
+          
+          order.setDigitalPaymentMethodName(index, name);
+        },
           child: Padding(padding: const EdgeInsets.all(Dimensions.paddingSizeDefault),
             child: Container(
               //padding: const EdgeInsets.symmetric(horizontal: Dimensions.paddingSizeSmall),
@@ -33,11 +45,38 @@ class CustomCheckBoxWidget extends StatelessWidget {
                     value: order.paymentMethodIndex == index,
                     activeColor: Colors.green,
                     checkColor: Theme.of(context).cardColor,
-                    onChanged: (bool? isChecked) => order.setDigitalPaymentMethodName(index, name))),
+                    onChanged: (bool? isChecked) {
+                      // Verificar se é pagamento a prazo
+                      if (name.toLowerCase().contains('installment') || 
+                          name.toLowerCase().contains('prazo') ||
+                          title.toLowerCase().contains('installment') ||
+                          title.toLowerCase().contains('prazo')) {
+                        print('===== PAGAMENTO A PRAZO SELECIONADO (CHECKBOX) =====');
+                        print('Name: $name');
+                        print('Title: $title');
+                      }
+                      
+                      order.setDigitalPaymentMethodName(index, name);
+                    })),
 
                 SizedBox(height: 40, child: Padding(padding: const EdgeInsets.all(Dimensions.paddingSizeExtraSmall),
                   child: CustomImageWidget(image : icon!))),
                 Expanded(child: Text(title, style: textRegular.copyWith(fontSize: Dimensions.fontSizeLarge, color: Theme.of(context).textTheme.bodyLarge?.color))),
+                
+                // Mostrar loading indicator se estiver carregando opções de parcelamento
+                if ((name.toLowerCase().contains('installment') || 
+                     name.toLowerCase().contains('prazo') ||
+                     title.toLowerCase().contains('installment') ||
+                     title.toLowerCase().contains('prazo')) && 
+                    order.isLoadingInstallmentOptions)
+                  const Padding(
+                    padding: EdgeInsets.only(right: Dimensions.paddingSizeSmall),
+                    child: SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    ),
+                  ),
               ]),
             ),
           ),

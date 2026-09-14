@@ -170,6 +170,7 @@ class Images {
   static const String hi = 'assets/images/in.png';
   static const String es = 'assets/images/es.png';
   static const String ar = 'assets/images/ar.png';
+  static const String pt = 'assets/images/pt.png';
   static const String removeWish = 'assets/images/remove_wish.png';
   static const String removeAddress = 'assets/images/remove_address.png';
   static const String orderPlaceIcon = 'assets/images/order_place_icon.png';

@@ -7,6 +7,10 @@ abstract class OrderDetailsRepositoryInterface<T> extends RepositoryInterface{
 
   Future<dynamic> getOrderInvoice(String orderID);
 
+  Future<dynamic> getOrderDetailsWithInstallments(String orderID);
+
+  Future<dynamic> submitInstallmentPaymentProof(int installmentId, String imagePath, String customerNote);
+
   Future<dynamic> downloadDigitalProduct(int orderDetailsId);
 
   Future<dynamic> resendOtpForDigitalProduct(int orderId);

@@ -163,6 +163,56 @@ class CheckoutRepository implements CheckoutRepositoryInterface{
     }
   }
 
+  @override
+  Future<ApiResponseModel> getInstallmentOptions({double? couponDiscount}) async {
+    try {
+      final response = await dioClient!.get(
+        AppConstants.installmentOptionsUri,
+        queryParameters: {
+          'coupon_discount': couponDiscount ?? 0,
+        },
+      );
+      return ApiResponseModel.withSuccess(response);
+    } catch (e) {
+      return ApiResponseModel.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
+
+  @override
+  Future<ApiResponseModel> placeOrderByInstallment({
+    required int paymentPeriod,
+    String? addressId,
+    String? billingAddressId,
+    String? couponCode,
+    String? orderNote,
+    String? paymentNote,
+    String? currentCurrencyCode,
+    bool? isCheckCreateAccount,
+    String? guestId,
+  }) async {
+    try {
+      int isCheckAccount = (isCheckCreateAccount ?? false) ? 1 : 0;
+      
+      final response = await dioClient!.post(
+        AppConstants.placeOrderByInstallmentUri,
+        data: {
+          'payment_period': paymentPeriod,
+          'address_id': addressId,
+          'billing_address_id': billingAddressId,
+          'coupon_code': couponCode ?? '',
+          'order_note': orderNote ?? '',
+          'payment_note': paymentNote ?? '',
+          'current_currency_code': currentCurrencyCode ?? 'MZN',
+          'is_check_create_account': isCheckAccount,
+          'guest_id': guestId ?? Provider.of<AuthController>(Get.context!, listen: false).getGuestToken(),
+        },
+      );
+      return ApiResponseModel.withSuccess(response);
+    } catch (e) {
+      return ApiResponseModel.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
+
 
   @override
   Future add(value) {

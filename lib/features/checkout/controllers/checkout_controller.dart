@@ -1,7 +1,17 @@
+import 'package:provider/provider.dart';
+
+
+
+// ...existing code...
+// ...existing code...
+
 import 'package:cobes_marketplace/data/model/api_response.dart';
 import 'package:cobes_marketplace/features/auth/controllers/auth_controller.dart';
 import 'package:cobes_marketplace/features/cart/domain/models/cart_model.dart';
+import 'package:cobes_marketplace/features/checkout/domain/models/installment_options_model.dart';
 import 'package:cobes_marketplace/features/checkout/domain/services/checkout_service_interface.dart';
+import 'package:cobes_marketplace/features/checkout/domain/services/mpesa_payment_service.dart';
+import 'package:cobes_marketplace/features/checkout/domain/services/ponto24_payment_service.dart';
 import 'package:cobes_marketplace/features/offline_payment/domain/models/offline_payment_model.dart';
 import 'package:cobes_marketplace/features/splash/controllers/splash_controller.dart';
 import 'package:cobes_marketplace/helper/api_checker.dart';
@@ -10,12 +20,71 @@ import 'package:cobes_marketplace/main.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:cobes_marketplace/common/basewidget/show_custom_snakbar_widget.dart';
+
 import 'package:cobes_marketplace/features/checkout/screens/digital_payment_order_place_screen.dart';
-import 'package:provider/provider.dart';
+
 
 
 
 class CheckoutController with ChangeNotifier {
+  // Ponto24 payment method
+  Future<ApiResponseModel> placeOrderByPonto24({
+    required String addressId,
+    required String billingAddressId,
+    String? couponCode,
+    double? couponDiscount,
+    String? orderNote,
+    String? guestId,
+  }) async {
+    _isLoading = true;
+    notifyListeners();
+    final ponto24Service = Ponto24PaymentService(checkoutService: checkoutServiceInterface);
+    final response = await ponto24Service.placeOrderByPonto24(
+      addressId: addressId,
+      billingAddressId: billingAddressId,
+      couponCode: couponCode,
+      couponDiscount: couponDiscount,
+      orderNote: orderNote,
+      guestId: guestId,
+    );
+    _isLoading = false;
+    notifyListeners();
+    return response;
+  }
+  // M-Pesa payment method
+  Future<ApiResponseModel> placeOrderByMpesa({
+    required String mpesaPhoneNumber,
+    required String addressId,
+    required String billingAddressId,
+    String? couponCode,
+    double? couponDiscount,
+    String? orderNote,
+    String? guestId,
+    double? bringChangeAmount,
+  }) async {
+    _isLoading = true;
+    notifyListeners();
+    final mpesaService = MpesaPaymentService(checkoutService: checkoutServiceInterface);
+    final response = await mpesaService.placeOrderByMpesa(
+      mpesaPhoneNumber: mpesaPhoneNumber,
+      addressId: addressId,
+      billingAddressId: billingAddressId,
+      couponCode: couponCode,
+      couponDiscount: couponDiscount,
+      orderNote: orderNote,
+      guestId: guestId,
+      bringChangeAmount: bringChangeAmount,
+    );
+    _isLoading = false;
+    notifyListeners();
+    if (response.response != null && response.response!.statusCode == 200) {
+      // Success: handle navigation or state update as needed
+      showCustomSnackBar('Pagamento M-Pesa iniciado com sucesso!', Get.context!, isError: false);
+    } else {
+      showCustomSnackBar('Erro ao processar pagamento M-Pesa.', Get.context!);
+    }
+    return response;
+  }
   final CheckoutServiceInterface checkoutServiceInterface;
   CheckoutController({required this.checkoutServiceInterface});
 
@@ -24,6 +93,7 @@ class CheckoutController with ChangeNotifier {
   int? get billingAddressIndex => _billingAddressIndex;
   int? _shippingIndex;
   bool _isLoading = false;
+  bool _isLoadingInstallmentOptions = false;
   bool _isCheckCreateAccount = false;
   bool _newUser = false;
 
@@ -33,6 +103,7 @@ class CheckoutController with ChangeNotifier {
   int? get addressIndex => _addressIndex;
   int? get shippingIndex => _shippingIndex;
   bool get isLoading => _isLoading;
+  bool get isLoadingInstallmentOptions => _isLoadingInstallmentOptions;
   int get paymentMethodIndex => _paymentMethodIndex;
   bool get isCheckCreateAccount => _isCheckCreateAccount;
 
@@ -44,6 +115,13 @@ class CheckoutController with ChangeNotifier {
 
   ReferralAmount? _referralAmount;
   ReferralAmount? get referralAmount => _referralAmount;
+
+  // Installment payment properties
+  InstallmentOptionsModel? _installmentOptions;
+  InstallmentOptionsModel? get installmentOptions => _installmentOptions;
+
+  InstallmentOption? _selectedInstallmentOption;
+  InstallmentOption? get selectedInstallmentOption => _selectedInstallmentOption;
 
   String selectedPaymentName = '';
   void setSelectedPayment(String payment){
@@ -285,6 +363,7 @@ class CheckoutController with ChangeNotifier {
     confirmPasswordController.clear();
     _isCheckCreateAccount = false;
     _cashChangesAmount = null;
+    clearInstallmentData();
   }
 
 
@@ -314,6 +393,97 @@ class CheckoutController with ChangeNotifier {
     }
     notifyListeners();
     return apiResponse;
+  }
+
+  Future<ApiResponseModel> getInstallmentOptions({double? couponDiscount}) async {
+    print('===== INICIANDO CHAMADA PARA API DE OPÇÕES DE PARCELAMENTO =====');
+    print('couponDiscount: $couponDiscount');
+    
+    _isLoadingInstallmentOptions = true;
+    notifyListeners();
+    
+    ApiResponseModel apiResponse = await checkoutServiceInterface.getInstallmentOptions(couponDiscount: couponDiscount);
+    
+    _isLoadingInstallmentOptions = false;
+    
+    if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
+      print('===== RESPOSTA DA API DE PARCELAMENTO (SUCESSO) =====');
+      print('Status Code: ${apiResponse.response!.statusCode}');
+      print('Response Data: ${apiResponse.response!.data}');
+      
+      // Parse and store the installment options
+      _installmentOptions = InstallmentOptionsModel.fromJson(apiResponse.response!.data);
+    } else {
+      print('===== RESPOSTA DA API DE PARCELAMENTO (ERRO) =====');
+      print('Error: ${apiResponse}');
+      print('Error: ${apiResponse.error}');
+      ApiChecker.checkApi(apiResponse);
+    }
+    
+    notifyListeners();
+    return apiResponse;
+  }
+
+  Future<ApiResponseModel> placeOrderByInstallment({
+    required int paymentPeriod,
+    String? addressId,
+    String? billingAddressId,
+    String? couponCode,
+    String? orderNote,
+  }) async {
+    print('===== INICIANDO FINALIZAÇÃO DO PEDIDO A PRAZO =====');
+    print('Payment Period: $paymentPeriod');
+    print('Address ID: $addressId');
+    print('Billing Address ID: $billingAddressId');
+    
+    _isLoading = true;
+    notifyListeners();
+    
+    ApiResponseModel apiResponse = await checkoutServiceInterface.placeOrderByInstallment(
+      paymentPeriod: paymentPeriod,
+      addressId: addressId,
+      billingAddressId: billingAddressId,
+      couponCode: couponCode,
+      orderNote: orderNote,
+      paymentNote: 'Pagamento a prazo em $paymentPeriod parcelas',
+      currentCurrencyCode: Provider.of<SplashController>(Get.context!, listen: false).myCurrency?.code ?? 'MZN',
+      isCheckCreateAccount: _isCheckCreateAccount,
+      guestId: Provider.of<AuthController>(Get.context!, listen: false).getGuestToken(),
+    );
+    
+    _isLoading = false;
+    
+    if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
+      print('===== PEDIDO A PRAZO FINALIZADO COM SUCESSO =====');
+      print('Status Code: ${apiResponse.response!.statusCode}');
+      print('Response Data: ${apiResponse.response!.data}');
+      
+      // Limpar dados após sucesso
+      _addressIndex = null;
+      _billingAddressIndex = null;
+      sameAsBilling = false;
+      
+      showCustomSnackBar('Pedido criado com sucesso!', Get.context!, isError: false);
+    } else {
+      print('===== ERRO AO FINALIZAR PEDIDO A PRAZO =====');
+      print('Error: ${apiResponse.error}');
+      showCustomSnackBar('Erro ao processar pedido. Tente novamente.', Get.context!);
+      ApiChecker.checkApi(apiResponse);
+    }
+    
+    notifyListeners();
+    return apiResponse;
+  }
+
+  void setSelectedInstallmentOption(InstallmentOption option) {
+    _selectedInstallmentOption = option;
+    notifyListeners();
+  }
+
+  void clearInstallmentData() {
+    _installmentOptions = null;
+    _selectedInstallmentOption = null;
+    notifyListeners();
   }
 
 
