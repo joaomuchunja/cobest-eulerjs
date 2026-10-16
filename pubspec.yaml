@@ -2,7 +2,7 @@ name: cobes_marketplace
 description: A new Flutter setup application for starting a project.
 
 publish_to: 'none'
-version: 1.0.0+0
+version: 2.4.2+4
 environment:
   sdk: ^3.6.2
 
@@ -96,14 +96,18 @@ dev_dependencies:
   build_runner: ^2.4.13
   flutter_launcher_icons: ^0.13.1
 
-flutter_icons:
-  android: true
-  ios: true
-  image_path: "assets/images/cobest_ios_logo.png" # Substitua pelo caminho do seu ícone
-  remove_alpha_ios: true 
-
   flutter_test:
     sdk: flutter
+
+flutter_launcher_icons:
+  android: "ic_launcher"
+  ios: true
+  image_path: "assets/images/app_icon.png"
+  remove_alpha_ios: true
+  # Adaptive icon (Android 8+): sem isto o launcher encolhe o icone dentro da mascara
+  adaptive_icon_background: "#FFFFFF"
+  adaptive_icon_foreground: "assets/images/app_icon_foreground.png"
+  min_sdk_android: 21
 
 
 
